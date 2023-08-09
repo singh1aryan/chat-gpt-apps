@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stock {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Finance Dashboard</h1>
+        <input type="text" id="symbolInput" placeholder="Enter stock symbol (e.g., AAPL)">
+        <button id="getStockButton">Get Stock Data</button>
+        <div id="stockInfo"></div>
+    </div>
+
+    <script>
+        const symbolInput = document.getElementById('symbolInput');
+        const getStockButton = document.getElementById('getStockButton');
+        const stockInfo = document.getElementById('stockInfo');
+
+        getStockButton.addEventListener('click', getStockData);
+
+        async function getStockData() {
+            const apiKey = 'YOUR_API_KEY';
+            const symbol = symbolInput.value;
+            const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&apikey=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const timeSeries = data['Time Series (5min)'];
+                const latestTime = Object.keys(timeSeries)[0];
+                const latestPrice = timeSeries[latestTime]['1. open'];
+
+                stockInfo.innerHTML = `
+                    <div class="stock">
+                        <h2>Stock: ${symbol}</h2>
+                        <p>Latest Price: $${latestPrice}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error fetching stock data:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Review App</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Resume Review App</h1>
+        <textarea id="resumeText" placeholder="Enter your resume here..."></textarea>
+        <button id="reviewButton">Review</button>
+        <div id="reviewResult"></div>
+    </div>
+    <script>
+        const reviewButton = document.getElementById('reviewButton');
+        const reviewResult = document.getElementById('reviewResult');
+        const resumeText = document.getElementById('resumeText');
+
+        reviewButton.addEventListener('click', async () => {
+            const apiKey = 'YOUR_OPENAI_API_KEY';
+            const prompt = `Please review my resume:\n${resumeText.value}`;
+            const apiUrl = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    max_tokens: 150
+                })
+            });
+
+            const data = await response.json();
+            const review = data.choices[0].text;
+            reviewResult.innerHTML = `<p>${review}</p>`;
+        });
+
+    </script>
+</body>
+
+</html>
