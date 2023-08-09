@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List App with Local Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Todo List</h1>
+        <input type="text" id="newTodo" placeholder="Enter a new todo...">
+        <button id="addButton">Add</button>
+        <ul id="todoList"></ul>
+    </div>
+
+    <script>
+        const newTodoInput = document.getElementById('newTodo');
+        const addButton = document.getElementById('addButton');
+        const todoList = document.getElementById('todoList');
+
+        // Load todos from local storage
+        const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+        savedTodos.forEach(todoText => {
+            addTodoToList(todoText);
+        });
+
+        addButton.addEventListener('click', addTodo);
+        newTodoInput.addEventListener('keyup', function (event) {
+            if (event.key === "Enter") {
+                addTodo();
+            }
+        });
+
+        function addTodo() {
+            const todoText = newTodoInput.value.trim();
+
+            if (todoText !== '') {
+                addTodoToList(todoText);
+                saveTodosToLocalStorage();
+            }
+        }
+
+        function addTodoToList(todoText) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${todoText}
+                <button class="deleteButton">Delete</button>
+            `;
+            todoList.appendChild(li);
+
+            newTodoInput.value = '';
+
+            li.querySelector('.deleteButton').addEventListener('click', function () {
+                todoList.removeChild(li);
+                saveTodosToLocalStorage();
+            });
+        }
+
+        function saveTodosToLocalStorage() {
+            const todos = Array.from(todoList.querySelectorAll('li')).map(li => li.firstChild.textContent);
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+    </script>
+</body>
+
+</html>
